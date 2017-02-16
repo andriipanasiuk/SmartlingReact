@@ -30,7 +30,7 @@ NativeModules.SmartlingBridge.getLocalizedStrings((error, smartlingStrings) => {
 const myModuleEvt = new NativeEventEmitter(NativeModules.SmartlingEmitter);
 myModuleEvt.addListener( 'SmartlingStringsUpdated', (smartlingStrings) => {
   localizedStrings = new LocalizedStrings(smartlingStrings);
-  // force update current screen
+  // TODO force update current screen
 });
 
 class PropertyFinderApp extends Component {
