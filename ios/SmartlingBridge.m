@@ -3,41 +3,21 @@
 //  PropertyFinder
 //
 //  Created by Emilien on 2/14/17.
-//  Copyright © 2017 Facebook. All rights reserved.
+//  Copyright © 2017 Smartling Inc. All rights reserved.
 //
 
 #import "SmartlingBridge.h"
 #import "Smartling.h"
 
+#pragma mark - NativeModule
+
 @implementation SmartlingBridge
 
 RCT_EXPORT_MODULE();
 
-#pragma mark - NativeModule
-
 RCT_EXPORT_METHOD(getLocalizedStrings:(RCTResponseSenderBlock)callback) {
   NSDictionary *strings = [SmartlingBridge getStrings];
   callback(@[[NSNull null], strings]);
-}
-
-#pragma mark - NativeAppEventEmitter
-
-- (void)setBridge:(RCTBridge *)bridge {
-  [super setBridge:bridge];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stringsWereUpdated:) name:@"SmartlingStringsUpdatedNotification" object:nil];
-}
-
-- (void)dealloc {
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SmartlingStringsUpdatedNotification" object:nil];
-}
-
-- (NSArray<NSString *> *)supportedEvents {
-  return @[@"SmartlingStringsUpdated"];
-}
-
-- (void)stringsWereUpdated:(NSNotification *)notification {
-  NSDictionary *strings = [SmartlingBridge getStrings];
-  [self sendEventWithName:@"SmartlingStringsUpdated" body:strings];
 }
 
 #pragma mark - Helper
@@ -78,3 +58,27 @@ RCT_EXPORT_METHOD(getLocalizedStrings:(RCTResponseSenderBlock)callback) {
 
 @end
 
+#pragma mark - NativeAppEventEmitter
+
+@implementation SmartlingEmitter
+
+RCT_EXPORT_MODULE();
+
+- (void)startObserving {
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stringsWereUpdated:) name:@"SmartlingStringsUpdatedNotification" object:nil];
+}
+
+- (void)stopObserving {
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SmartlingStringsUpdatedNotification" object:nil];
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+  return @[@"SmartlingStringsUpdated"];
+}
+
+- (void)stringsWereUpdated:(NSNotification *)notification {
+  NSDictionary *strings = [SmartlingBridge getStrings];
+  [self sendEventWithName:@"SmartlingStringsUpdated" body:strings];
+}
+
+@end

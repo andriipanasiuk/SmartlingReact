@@ -1,20 +1,42 @@
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+import React, { Component } from 'react'
+import {
+  StyleSheet,
+  NavigatorIOS,
+  AppRegistry,
+  NativeModules,
+  NativeEventEmitter
+} from 'react-native';
+import LocalizedStrings from 'react-native-localization';
 
 var SearchPage = require('./SearchPage');
 
-var styles = ReactNative.StyleSheet.create({
+var styles = StyleSheet.create({
   container: {
     flex: 1
   }
 });
 
-class PropertyFinderApp extends React.Component {
+// Smartling localization
+global.localizedStrings = new LocalizedStrings({});
+
+// Get strings at launch
+NativeModules.SmartlingBridge.getLocalizedStrings((error, smartlingStrings) => {
+  localizedStrings = new LocalizedStrings(smartlingStrings);
+});
+
+// Listen for strings updates
+const myModuleEvt = new NativeEventEmitter(NativeModules.SmartlingEmitter);
+myModuleEvt.addListener( 'SmartlingStringsUpdated', (smartlingStrings) => {
+  localizedStrings = new LocalizedStrings(smartlingStrings);
+  // force update current screen
+});
+
+class PropertyFinderApp extends Component {
   render() {
     return (
-      <ReactNative.NavigatorIOS
+      <NavigatorIOS
         style={styles.container}
         initialRoute={{
           title: 'Property Finder',
@@ -24,4 +46,4 @@ class PropertyFinderApp extends React.Component {
   }
 }
 
-ReactNative.AppRegistry.registerComponent('PropertyFinder', function() { return PropertyFinderApp });
+AppRegistry.registerComponent('PropertyFinder', function() { return PropertyFinderApp });

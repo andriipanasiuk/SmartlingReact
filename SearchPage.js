@@ -8,11 +8,8 @@ import {
   View,
   TouchableHighlight,
   ActivityIndicator,
-  Image,
-  NativeModules,
-  NativeAppEventEmitter
+  Image
 } from 'react-native';
-import LocalizedStrings from 'react-native-localization';
 
 var SearchResults = require('./SearchResults');
 
@@ -66,21 +63,6 @@ var styles = StyleSheet.create({
     height: 138
   }
 });
-
-// Smartling localization
-let strings = new LocalizedStrings({});
-
-// Get strings at launch
-NativeModules.SmartlingBridge.getLocalizedStrings((error, smartlingStrings) => {
-  strings = new LocalizedStrings(smartlingStrings);
-});
-
-// Listen for strings updates
-var SmartlingEmitter = NativeAppEventEmitter.addListener('SmartlingStringsUpdated',
-  (smartlingStrings) => {
-    strings = new LocalizedStrings(smartlingStrings);
-  }
-);
 
 function urlForQueryAndPage(key, value, pageNumber) {
   var data = {
@@ -174,23 +156,23 @@ class SearchPage extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.description}>
-          {strings.title}
+          {localizedStrings.title}
         </Text>
         <TextInput
           style={styles.searchInput}
           value={this.state.searchString}
           onChange={this.onSearchTextChanged.bind(this)}
-          placeholder={strings.placeholder} />
+          placeholder={localizedStrings.placeholder} />
         <View style={styles.flowRight}>
           <TextInput
             style={styles.searchInput}
-            placeholder={strings.placeholder} />
+            placeholder={localizedStrings.placeholder} />
           <TouchableHighlight style={styles.button}
               underlayColor='#99d9f4'>
             <Text
               style={styles.buttonText}
               onPress={this.onSearchPressed.bind(this)}>
-              {strings.go}
+              {localizedStrings.go}
             </Text>
           </TouchableHighlight>
         </View>
@@ -198,7 +180,7 @@ class SearchPage extends Component {
           style={styles.button}
           onPress={this.onLocationPressed.bind(this)}
           underlayColor='#99d9f4'>
-          <Text style={styles.buttonText}>{strings.location}</Text>
+          <Text style={styles.buttonText}>{localizedStrings.location}</Text>
         </TouchableHighlight>
         <Image source={require('./Resources/house.png')} style={styles.image}/>
         {spinner}
