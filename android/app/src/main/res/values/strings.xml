@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">PropertyFinder</string>
+    <string name="welcome">Welcome to React Native!</string>
+    <string name="get_started">To get started, edit index.android.js</string>
+    <string name="instructions">Double tap R on your keyboard to reload,\nShake or press menu button for dev menu</string>
 </resources>
